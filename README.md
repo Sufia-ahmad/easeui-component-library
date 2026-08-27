@@ -282,9 +282,38 @@ demonstrate size variation.
 | Command | What it does |
 |---|---|
 | `npm run dev` | Starts the Vite dev server with hot reload |
-| `npm run build` | Type-checks and builds the production library bundle |
-| `npm run preview` | Serves the production build locally |
+| `npm run build` | Type-checks and builds the **npm-publishable library bundle** (`easeui.es.js` / `easeui.umd.js`) - no `index.html`, not deployable as a website on its own |
+| `npm run build:app` | Builds the **actual demo/documentation website** as a normal SPA (`dist-app/index.html` + assets) - this is what gets deployed |
+| `npm run preview` | Serves the `build:app` output locally, to sanity-check before deploying |
 | `npm run lint` | Runs ESLint across the project |
+
+---
+
+## Deploying to Vercel
+
+This project has two very different build outputs (see the scripts
+table above) - `npm run build` produces a component library bundle
+with no HTML page at all, so deploying that directly would just show a
+blank/404 page. `npm run build:app` is the one that produces an actual
+browsable site.
+
+A `vercel.json` is already included at the project root, pointing
+Vercel at the right build command and output folder, plus a rewrite
+rule so React Router's client-side routes (like `/components/tooltip`)
+don't 404 on a direct visit or page refresh.
+
+**Steps (GitHub-connected deploy, the normal way):**
+1. Push this repo to GitHub (see the commands your mentor/you already
+   have for that)
+2. Go to [vercel.com](https://vercel.com) → **Add New... → Project**
+3. Import the GitHub repo
+4. Vercel will detect the `vercel.json` automatically - if it asks you
+   to confirm build settings, they should show:
+   - Build Command: `npm run build:app`
+   - Output Directory: `dist-app`
+5. Click **Deploy**
+
+Every future push to the connected branch will auto-redeploy.
 
 ---
 
@@ -303,8 +332,5 @@ full list.
 was silently preventing `tsc` from ever type-checking the actual source
 files - fixed, and `npx tsc --noEmit -p tsconfig.app.json` now passes
 clean too.
-
-
-
 
 
